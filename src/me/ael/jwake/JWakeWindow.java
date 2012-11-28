@@ -271,21 +271,30 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 			int result = JOptionPane.showOptionDialog(frame, inputs, "Add a new machine", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (result == JOptionPane.OK_OPTION)
 			{
-				try
+				String newName = name.getText();
+				String newAddress = address.getText();
+				
+				newName = newName.replaceAll("[^A-Za-z0-9.-_ ]", "");
+				newAddress = newAddress.replaceAll("[^A-Fa-f0-9-:]", "");
+				
+				if (newName.length() > 0 && newAddress.length() > 0)
 				{
-					Machine m = new Machine(name.getText(), address.getText());
-					
-					machines.add(m);
-					writeMachines();
-					status.setText("Added '" + m.name + "'");
-					
-					machineTable.clearSelection();
-					remove.setEnabled(false);
-					machineTable.repaint();
-				}
-				catch (IllegalArgumentException e)
-				{
-					JOptionPane.showMessageDialog(frame, e.getMessage(), "Problem adding machine", JOptionPane.WARNING_MESSAGE);
+					try
+					{
+						Machine m = new Machine(newName, newAddress);
+						
+						machines.add(m);
+						writeMachines();
+						status.setText("Added '" + m.name + "'");
+						
+						machineTable.clearSelection();
+						remove.setEnabled(false);
+						machineTable.repaint();
+					}
+					catch (IllegalArgumentException e)
+					{
+						JOptionPane.showMessageDialog(frame, e.getMessage(), "Problem adding machine", JOptionPane.WARNING_MESSAGE);
+					}
 				}
 			}
 		}
