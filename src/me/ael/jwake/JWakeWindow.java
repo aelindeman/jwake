@@ -171,8 +171,10 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 	{
 		machines = new LinkedList<Machine>();
 		
-		try (BufferedReader loader = new BufferedReader(new FileReader(STORAGE)))
+		try
 		{
+			BufferedReader loader = new BufferedReader(new FileReader(STORAGE));
+			
 			String line;
 			while ((line = loader.readLine()) != null)
 			{
@@ -181,6 +183,7 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 			}
 			
 			status.setText("Loaded " + machines.size() + (machines.size() == 1 ? " entry" : " entries") + " from " + STORAGE);
+			loader.close();
 		}
 		catch (Exception e)
 		{
@@ -193,8 +196,10 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 	 */
 	private void writeMachines()
 	{
-		try (BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(STORAGE))))
+		try
 		{
+			BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(STORAGE)));
+			
 			for (Machine m : machines)
 			{
 				StringBuffer line = new StringBuffer();
@@ -208,6 +213,7 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 			}
 			
 			w.flush();
+			w.close();
 		}
 		catch (IOException e)
 		{
