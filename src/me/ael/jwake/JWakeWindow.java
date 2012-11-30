@@ -134,13 +134,13 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 		buttons.setBorder(new EmptyBorder(5, 0, 0, 0));
 		buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
 		
-		ImageIcon addIcon = new ImageIcon(getClass().getResource("res/add.png"), "Add");
+		ImageIcon addIcon = new ImageIcon(getClass().getResource("/res/add.png"), "Add");
 		add = new JButton(addIcon);
 		add.setBorder(new EmptyBorder(4, 6, 4, 6));
 		add.addActionListener(this);
 		buttons.add(add);
 		
-		ImageIcon removeIcon = new ImageIcon(getClass().getResource("res/remove.png"), "Remove");
+		ImageIcon removeIcon = new ImageIcon(getClass().getResource("/res/remove.png"), "Remove");
 		remove = new JButton(removeIcon);
 		remove.setBorder(new EmptyBorder(4, 6, 4, 6));
 		remove.setEnabled(false);
@@ -328,7 +328,7 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 	{
 		if (click.getSource() == about)
 		{
-			ImageIcon icon = new ImageIcon(getClass().getResource("res/icon-48.png"));
+			ImageIcon icon = new ImageIcon(getClass().getResource("/res/icon-48.png"));
 			
 			JLabel hero = new JLabel("jwake " + VERSION, SwingConstants.CENTER);
 			hero.setFont(new Font(layout.getFont().getFamily(), Font.BOLD, 18));
