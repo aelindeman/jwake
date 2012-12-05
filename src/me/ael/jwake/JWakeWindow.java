@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,10 +23,26 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 	private static final long serialVersionUID = -251105713894579029L;
 	
 	private static final String VERSION = "0.7.0";
+	
+	/**
+	 * Monospace font to be used for all MAC address text fields.
+	 */
 	private static final Font ADDRESS_FONT = new Font("Lucida Console", Font.PLAIN, 16);
 	
-	private static final String SEPARATOR = ",";
-	private static final String STORAGE = "machines.txt";
+	/**
+	 * Regular expression to validate MAC addresses against.
+	 */
+	private static final String VALID = "^([0-9A-F]{2}[:-]){5}([0-9A-F]){2}$";
+	
+	/**
+	 * Separator to use in the machine list file.
+	 */
+	private static final String SEPARATOR = "\t";
+	
+	/**
+	 * Location of the machine list.
+	 */
+	private static String STORAGE = "machines.txt";
 	
 	private List<Machine> machines;
 
@@ -44,11 +61,26 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 	
 	private JLabel link;
 
+	/**
+	 * Main method.
+	 * 
+	 * Sets the storage location (if specified from the argument list) and calls
+	 * the JWakeWindow constructor.
+	 * 
+	 * @param args Command line arguments
+	 */
 	public static void main(String[] args)
 	{
+		if (args.length > 0)
+			if (args[0].length() > 0)
+				STORAGE = args[0];
+		
 		new JWakeWindow();
 	}
 
+	/**
+	 * Builds and displays the main JWake window.
+	 */
 	public JWakeWindow()
 	{
 		try
@@ -175,14 +207,24 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 		{
 			BufferedReader loader = new BufferedReader(new FileReader(STORAGE));
 			
+			Pattern regex = Pattern.compile(VALID, Pattern.CASE_INSENSITIVE);
 			String line;
+			int invalid = 0;
+			
 			while ((line = loader.readLine()) != null)
 			{
 				Machine m = new Machine(line.split(SEPARATOR));
-				machines.add(m);
+				if (regex.matcher(m.address.toUpperCase()).matches())
+					machines.add(m);
+				else
+					invalid ++;
 			}
 			
 			status.setText("Loaded " + machines.size() + (machines.size() == 1 ? " entry" : " entries") + " from " + STORAGE);
+			
+			if (invalid > 0)
+				status.setText(status.getText() + " (" + invalid + " invalid)");
+			
 			loader.close();
 		}
 		catch (Exception e)
@@ -274,8 +316,8 @@ public class JWakeWindow extends JFrame implements ActionListener, MouseListener
 				String newName = name.getText();
 				String newAddress = address.getText();
 				
-				newName = newName.replaceAll("[^A-Za-z0-9.-_ ]", "");
-				newAddress = newAddress.replaceAll("[^A-Fa-f0-9-:]", "");
+				newName = newName.replaceAll(SEPARATOR, "");
+				newAddress = newAddress.toUpperCase().replaceAll("[^A-F0-9-:]", "");
 				
 				if (newName.length() > 0 && newAddress.length() > 0)
 				{
